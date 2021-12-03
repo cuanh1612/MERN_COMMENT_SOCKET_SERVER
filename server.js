@@ -8,7 +8,7 @@ const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const cors = require('cors')
 const http = require('http')
-const {Server} = require('socket.io')
+const { Server } = require('socket.io')
 
 
 dotenv.config()
@@ -19,18 +19,23 @@ const io = new Server(server)
 
 
 //Connect database
-const connectionParams={
+const connectionParams = {
     useNewUrlParser: true,
-    useUnifiedTopology: true 
+    useUnifiedTopology: true
 }
 
-mongoose.connect(url,connectionParams)
-    .then( () => {
-        console.log('Connected to database ')
-    })
-    .catch( (err) => {
-        console.error(`Error connecting to the database. \n${err}`);
-    })
+const connectDB = async () => {
+    await mongoose.connect(url, connectionParams)
+        .then(() => {
+            console.log('Connected to database ')
+        })
+        .catch((err) => {
+            console.error(`Error connecting to the database. \n${err}`);
+        })
+}
+
+connectDB()
+
 
 //app use midleware
 app.use(express.json())
@@ -58,13 +63,13 @@ io.on('connection', (socket) => {
 
         const check = users.every(user => user.userId !== socket.id)
 
-        if(check){
+        if (check) {
             users.push(user)
             socket.join(user.room)
-        }else{
+        } else {
             users.map(user => {
-                if(user.userId === socket.id){
-                    if(user.roomId !== id){
+                if (user.userId === socket.id) {
+                    if (user.roomId !== id) {
                         socket.leave(user.room)
                         socket.join(id)
                         user.room = id
@@ -78,19 +83,19 @@ io.on('connection', (socket) => {
 
     socket.on('createComment', async msg => {
         console.log(msg);
-        const {username, content, product_id, createdAt, rating, send, commentId} = msg
+        const { username, content, product_id, createdAt, rating, send, commentId } = msg
 
         const newComment = new Comments({
             username, content, product_id, createdAt, rating
         })
 
-        if(send === 'replyComment'){
-            const {_id, username, content, product_id, createdAt, rating} = newComment
+        if (send === 'replyComment') {
+            const { _id, username, content, product_id, createdAt, rating } = newComment
 
             const comment = await Comments.findById(commentId)
 
-            if(comment){
-                comment.reply.push({_id, username, content, createdAt, rating})
+            if (comment) {
+                comment.reply.push({ _id, username, content, createdAt, rating })
                 await comment.save()
                 io.to(product_id).emit('sendReplyCommentToClient', comment)
             }
