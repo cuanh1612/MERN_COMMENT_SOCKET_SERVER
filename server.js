@@ -14,7 +14,13 @@ const { Server } = require('socket.io')
 dotenv.config()
 const url = process.env.MONGODB_URL
 const server = http.createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:3000',
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        credentials: true
+    }
+})
 
 
 
