@@ -19,23 +19,15 @@ const io = new Server(server)
 
 
 //Connect database
-const connectionParams = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}
+// mongoose.connect(url)
+//     .then(e => console.log('Connect DB succeed'))
+//     .catch(err => console.log("Connect DB false"))
 
-const connectDB = async () => {
-    await mongoose.connect(url, connectionParams)
-        .then(() => {
-            console.log('Connected to database ')
-        })
-        .catch((err) => {
-            console.error(`Error connecting to the database. \n${err}`);
-        })
-}
-
-connectDB()
-
+mongoose.connect('mongodb+srv://admin:huy16120101@cluster0.rwzsn.mongodb.net/MERN_COMMENT_SOCKET?retryWrites=true&w=majority').then(result => {
+    console.log(' Connect DB success')
+}).catch(error => {
+    console.log('connect false')
+})
 
 //app use midleware
 app.use(express.json())
