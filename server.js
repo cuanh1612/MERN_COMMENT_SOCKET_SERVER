@@ -37,7 +37,11 @@ mongoose.connect('mongodb+srv://admin:huy16120101@cluster0.rwzsn.mongodb.net/MER
 
 //app use midleware
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true
+}))
 app.use(express.urlencoded())
 
 //Routes
